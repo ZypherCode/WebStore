@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<h2>Добавить товар</h2>
+
+<form method="post" onsubmit="syncQuill()">
+    {{ form.hidden_tag() }}
+
+    <div>
+        {{ form.title.label }}<br>
+        {{ form.title(class="form-control") }}<br>
+        {% for error in form.title.errors %}
+        <div style="color: red;">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div>
+        {{ form.price.label }}<br>
+        {{ form.price(class="form-control") }}<br>
+        {% for error in form.price.errors %}
+        <div style="color: red;">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div>
+        <!-- Quill редактор -->
+        {{form.content.label}}<br>
+        <div id="editor" style="height: 200px;"></div>
+
+        <!-- скрытое поле для Flask -->
+        {{ form.content(id="content") }}<br>
+    </div>
+
+    <div>
+        {{ form.tags.label }}<br>
+        {{ form.tags(class="form-control") }}<br>
+        {% for error in form.tags.errors %}
+        <div style="color: red;">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div>
+        {{ form.image.label }}<br>
+        {{ form.image(class="form-control") }}<br>
+        {% for error in form.image.errors %}
+        <div style="color: red;">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top: 10px;">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+
+<script>
+    const quill = new Quill('#editor', {
+        theme: 'snow',
+
+    });
+
+    function syncQuill() {
+        const content = quill.root.innerHTML;
+        document.getElementById("content").value = content;
+    }
+</script>
+
+{% endblock %}

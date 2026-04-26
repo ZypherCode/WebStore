@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Корзина</h2>
+
+    <div id="cart-container"></div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", RefreshList);
+
+    async function RefreshList() {
+        const response = await fetch("/cart/json");
+        const data = await response.json();
+
+        const container = document.getElementById("cart-container");
+
+        // очистка
+        container.innerHTML = "";
+
+        if (!data.items || data.items.length === 0) {
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    Корзина пуста
+                </div>
+            `;
+            return;
+        }
+
+        // создаём таблицу
+        let table = `
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Товар</th>
+                        <th>Название</th>
+                        <th>Цена</th>
+                        <th>Количество</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        for (const item of data.items) {
+            table += `
+                <tr>
+
+                    <td style="width: 100px;">
+                        <img src="${item.img}"
+                             class="img-fluid rounded"
+                             style="max-height: 70px;">
+                    </td>
+
+                    <td>
+                        <a href="${item.link}">
+                            ${item.title}
+                        </a>
+                    </td>
+
+                    <td>
+                        ${item.price} ₽
+                    </td>
+
+                    <td>
+                        ${item.quantity}
+                    </td>
+
+                    <td>
+                        <button class="btn btn-sm btn-danger"
+                                onclick="deleteItem(${item.id})">
+                            Удалить
+                        </button>
+                    </td>
+
+                </tr>
+            `;
+        }
+
+        table += `
+                </tbody>
+            </table>
+        </div>
+        `;
+
+        container.innerHTML = table;
+    }
+
+    async function deleteItem(id) {
+        data = { op: "del", id: id }
+        await fetch(`/cart`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json' // Alert the server you're sending JSON
+            },
+            body: JSON.stringify(data)
+        });
+
+        RefreshList();
+    }
+
+</script>
+
+{% endblock %}

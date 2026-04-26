@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container mt-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src={{item.image}} alt="Card image cap"
+                    onerror='this.onerror=null; this.src="https://era74.ru/media/catalog/2019/08/06/no-photo_94BoRIW.png"'>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <p class="card-text">{{item.title}}</p>
+                    <p class="card-text">{{((item.good_marks / (item.good_marks + item.bad_marks)) * 100) | round |
+                        int}}% {{item.good_marks + item.bad_marks}} reviews
+                        {{item.bought}} bought</p>
+                    <a href="#discription">Описание</a>
+                    <p class="card-text">CTR: {{((item.clicked / item.showed) * 100) | round(2)}}%</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h3 class="card-title">{{item.price}}₽</h3>
+                    <button class="btn btn-success" id="add-to-cart" data-item-id="{{item.id}}">В корзину</button>
+                    <p><br>Продавец: <a href="/user/{{seller.id}}">{{seller.name}}</a></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<p style="margin-top: 50px;" id="discription">{{item.content | replace('\n', '<br>') | safe }}</p>
+
+<script>
+    function addToCart(event) {
+        const cart_api_url = 'http://127.0.0.1:8080/cart';
+        const data = { op: 'add', id: event.target.dataset.itemId, q: 1 };
+
+        fetch(cart_api_url, {
+            method: 'POST', // Метод запроса
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8' // Тип содержимого
+            },
+            body: JSON.stringify(data) // Преобразование данных в JSON
+        })
+    }
+
+    const addToCartBtn = document.getElementById('add-to-cart');
+    addToCartBtn.addEventListener('click', addToCart);
+</script>
+
+{% endblock %}

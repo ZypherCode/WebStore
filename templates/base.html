@@ -6,23 +6,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <title>{{title}}</title>
 </head>
 
 <body>
     <header>
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="#">Наше приложение</a>
+            <a class="navbar-brand" href="/">Web store</a>
+
+            <div class="form-inline">
+                <input class="form-control mr-sm-2" id="search_line"="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" id="search_btn">Search</button>
+            </div>
+
             {% if current_user.is_authenticated %}
-            <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+            <!-- <a class="navbar-brand" href="/logout">{{ current_user.name }}</a> -->
+            <div style="display: flex; justify-content: space-around;">
+                <a class="btn btn-secondary-outline" style="margin-right: 5px;" href="/cart">Корзина</a>
+                <div class="dropleft">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ current_user.name }}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="/cart">Корзина</a>
+                        <a class="dropdown-item" href="/account">Аккаунт</a>
+                        <a class="dropdown-item" href="#">Настройки</a>
+                        <a class="dropdown-item" href="/logout">Выход</a>
+                    </div>
+                </div>
+            </div>
             {% else %}
             <p>
                 <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
                 <a class="btn btn-success" href="/login">Войти</a>
             </p>
             {% endif %}
+
         </nav>
     </header>
+
+    <script>
+        document.getElementById('search_btn').addEventListener('click', function () {
+            // Получаем текст из поля ввода
+            var url = document.getElementById('search_line').value;
+
+            // Проверяем, не пустой ли ввод
+            if (url) {
+                // Переходим по ссылке
+                window.location.href = '/search?q=' + url;
+            } else {
+                alert('Пожалуйста, введите URL');
+            }
+        });
+    </script>
     <!-- Begin page content -->
     <main role="main" class="container">
         {% block content %}{% endblock %}

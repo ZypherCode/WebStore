@@ -1,6 +1,5 @@
-# routes.py
 from flask import Blueprint, render_template, redirect
-from flask_login import login_user
+from flask_login import current_user, login_user, logout_user
 
 from models import db_session
 from models.users import User
@@ -8,9 +7,9 @@ from models.users import User
 from forms.user import RegisterForm, LoginForm
 
 # Создаем чертеж
-main_bp = Blueprint('main', __name__)
+auth_bp = Blueprint('main', __name__)
 
-@main_bp.route('/register', methods=['GET', 'POST'])
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
@@ -35,7 +34,7 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-@main_bp.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -48,3 +47,11 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@auth_bp.route('/logout')
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+
+    return redirect('/')

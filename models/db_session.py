@@ -8,7 +8,7 @@ __factory = None
 
 
 def global_init(db_file):
-    global __factory
+    global __factory, engine
 
     if __factory:
         return
@@ -20,7 +20,7 @@ def global_init(db_file):
     print(f"Подключение к базе данных по адресу {conn_str}")
 
     engine = sa.create_engine(conn_str, echo=False)
-    __factory = orm.sessionmaker(bind=engine)
+    __factory = orm.scoped_session(orm.sessionmaker(bind=engine))
 
     from . import __all_models
 

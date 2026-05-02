@@ -14,6 +14,7 @@ class Products(SqlAlchemyBase):
     tags = sqlalchemy.Column(sqlalchemy.String)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     image = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    stock = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
     price = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     good_marks = sqlalchemy.Column(sqlalchemy.Integer, default=1)
@@ -30,3 +31,4 @@ class Products(SqlAlchemyBase):
     user_id = sqlalchemy.Column(sqlalchemy.Integer, 
                                 sqlalchemy.ForeignKey("users.id"))
     user = orm.relationship('User', back_populates='products')
+    reviews = orm.relationship('Review', back_populates='product')

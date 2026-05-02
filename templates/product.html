@@ -20,6 +20,7 @@
                         int}}% {{item.good_marks + item.bad_marks}} reviews
                         {{item.bought}} bought</p>
                     <a href="#discription">Описание</a>
+                    <a href="#reviews">Отзывы</a>
                     <p class="card-text">CTR: {{((item.clicked / item.showed) * 100) | round(2)}}%</p>
                 </div>
             </div>
@@ -29,7 +30,14 @@
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
                     <h3 class="card-title">{{item.price}}₽</h3>
-                    <button class="btn btn-success" id="add-to-cart" data-item-id="{{item.id}}">В корзину</button>
+                    {% if in_cart %}
+                    <a href="/cart" class="btn btn-success" id="add-to-cart" data-disable="true"
+                        data-item-id="{{item.id}}">Уже
+                        в корзине</a>
+                    {% else %}
+                    <button class="btn btn-success" id="add-to-cart" data-disable="false" data-item-id="{{item.id}}">В
+                        корзину</button>
+                    {% endif %}
                     <p><br>Продавец: <a href="/user/{{seller.id}}">{{seller.name}}</a></p>
                 </div>
             </div>
@@ -40,9 +48,47 @@
 
 <p style="margin-top: 50px;" id="discription">{{item.content | replace('\n', '<br>') | safe }}</p>
 
+{% if not has_review %}
+<form method="post">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.voice.label }}<br>
+        {{ form.voice(class="form-control") }}<br>
+        {% for error in form.voice.errors %}
+        <div style="color: red;">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div>
+        {{ form.content.label }}<br>
+        {{ form.content(class="form-control") }}<br>
+        {% for error in form.content.errors %}
+        <div style="color: red;">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top: 10px;">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+
+<br>
+{% endif %}
+<br>
+
+<ul class="list-group" id="reviews"></ul>
+{% for i in item.reviews %}
+<li class="list-group-item">{{i.user.name}}: {{i.content}}</li>
+{% endfor %}
+
 <script>
     function addToCart(event) {
-        const cart_api_url = 'http://127.0.0.1:8080/cart';
+        if (event.target.dataset.disable == "true") {
+            window.location.assign('/cart');
+            return;
+        }
+
+        const cart_api_url = '/cart';
         const data = { op: 'add', id: event.target.dataset.itemId, q: 1 };
 
         fetch(cart_api_url, {
@@ -51,7 +97,10 @@
                 'Content-Type': 'application/json;charset=utf-8' // Тип содержимого
             },
             body: JSON.stringify(data) // Преобразование данных в JSON
-        })
+        });
+
+        event.target.innerHTML = "Уже в корзине"
+        event.target.dataset.disable = "true"
     }
 
     const addToCartBtn = document.getElementById('add-to-cart');

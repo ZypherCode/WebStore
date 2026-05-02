@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-md-2 mb-4">
+            <div class="list-group">
+                <a href="/seller/dashboard" class="list-group-item list-group-item-action">📊 Обзор</a>
+                <a href="#" class="list-group-item list-group-item-action active">📦 Товар</a>
+                <a href="/product/new" class="list-group-item list-group-item-action">➕ Добавить</a>
+            </div>
+        </div>
+
+        <!-- Main -->
+        <div class="col-md-10">
+
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>{{ product.title }}</h3>
+
+                <div>
+                    <a href="/product/{{ product.id }}" class="btn btn-outline-secondary btn-sm">Открыть</a>
+                    <a href="#" class="btn btn-outline-primary btn-sm">Редактировать</a>
+                    <a href="/product/{{product.id}}/delete" class="btn btn-outline-danger btn-sm">Удалить</a>
+                </div>
+            </div>
+
+            <!-- Основная инфа -->
+            <div class="row mb-4">
+
+                <div class="col-md-3">
+                    <img src="{{ product.image }}" class="img-fluid rounded shadow-sm">
+                </div>
+
+                <div class="col-md-9">
+                    <p><strong>Цена:</strong> {{ product.price }} ₽</p>
+                    <p><strong>Остаток:</strong>
+                        {% if product.stock > 0 %}
+                        {{ product.stock }}
+                        {% else %}
+                        <span class="text-danger">Нет в наличии</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Теги:</strong> {{ product.tags }}</p>
+                    <p><strong>Создан:</strong> {{ product.created_date.strftime("%d.%m.%Y") }}</p>
+                </div>
+
+            </div>
+
+            <!-- Метрики -->
+            <div class="row mb-4">
+
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6>👁️ Просмотры</h6>
+                            <h4>{{ product.showed }}</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6>🖱️ Клики</h6>
+                            <h4>{{ product.clicked }}</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6>📦 Продажи</h6>
+                            <h4>{{ product.bought }}</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6>📈 CTR</h6>
+                            <h4>
+                                {% if product.showed > 0 %}
+                                {{ ((product.clicked / product.showed) * 100) | round(1) }}%
+                                {% else %}
+                                0%
+                                {% endif %}
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Дополнительная аналитика -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+
+                    <h5 class="mb-3">📊 Конверсия</h5>
+
+                    <p>
+                        Конверсия в покупку:
+                        <strong>
+                            {% if product.clicked > 0 %}
+                            {{ ((product.bought / product.clicked) * 100) | round(1) }}%
+                            {% else %}
+                            0%
+                            {% endif %}
+                        </strong>
+                    </p>
+
+                </div>
+            </div>
+
+            <!-- Отзывы (если есть) -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="mb-3">💬 Отзывы</h5>
+
+                    {% if product.reviews and product.reviews|length > 0 %}
+                    <ul class="list-group">
+                        {% for r in product.reviews %}
+                        <li class="list-group-item">
+                            <strong>{{ r.user.name }}:</strong>
+                            {{ r.text }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="text-muted">Пока нет отзывов</div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

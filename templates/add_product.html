@@ -26,6 +26,14 @@
     </div>
 
     <div>
+        {{ form.stock.label }}<br>
+        {{ form.stock(class="form-control") }}<br>
+        {% for error in form.stock.errors %}
+        <div style="color: red;">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div>
         <!-- Quill редактор -->
         {{form.content.label}}<br>
         <div id="editor" style="height: 200px;"></div>

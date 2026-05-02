@@ -21,6 +21,7 @@ class User(SqlAlchemyBase, UserMixin):
                                      default=datetime.datetime.now)
     products = orm.relationship("Products", back_populates='user')
     carts = orm.relationship("Cart", back_populates='user')
+    orders = orm.relationship("Order", back_populates='user')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

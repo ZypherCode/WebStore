@@ -21,10 +21,10 @@
 <body>
     <header>
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="/">Ели акспресс</a>
+            <a class="navbar-brand" href="/">Эли акспресс</a>
 
             <div class="form-inline">
-                <input class="form-control mr-sm-2" id="search_line"="search" placeholder="Search" aria-label="Search">
+                <input class="form-control mr-sm-2" id="search_line" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" id="search_btn">Search</button>
             </div>
 
@@ -39,8 +39,9 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="/cart">Корзина</a>
-                        <a class="dropdown-item" href="/account">Аккаунт</a>
-                        <a class="dropdown-item" href="#">Настройки</a>
+                        {% if current_user.is_seller %}
+                        <a class="dropdown-item" href="/seller/dashboard">Магазин</a>
+                        {% endif %}
                         <a class="dropdown-item" href="/logout">Выход</a>
                     </div>
                 </div>
@@ -57,19 +58,13 @@
 
     <script>
         document.getElementById('search_btn').addEventListener('click', function () {
-            // Получаем текст из поля ввода
             var url = document.getElementById('search_line').value;
 
-            // Проверяем, не пустой ли ввод
             if (url) {
-                // Переходим по ссылке
                 window.location.href = '/search?q=' + url;
-            } else {
-                alert('Пожалуйста, введите URL');
             }
         });
     </script>
-    <!-- Begin page content -->
     <main role="main" class="container">
         {% block content %}{% endblock %}
     </main>

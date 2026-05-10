@@ -1,0 +1,96 @@
+<div class="container mb-3">
+
+    <div class="row g-2 align-items-center">
+        <div class="col-md-3">
+            <select id="orderSelect" class="form-select">
+                <option value="">Сортировка</option>
+                <option value="lp">Цена ↓</option>
+                <option value="gp">Цена ↑</option>
+                <option value="sd">Популярность</option>
+                <option value="ctr">Привлекательность</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <select id="filterSelect" class="form-select">
+                <option value="">Фильтр</option>
+                <option value="available">В наличии</option>
+                <option value="cheap">До 1000₽</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100" onclick="applySearch()">Применить</button>
+        </div>
+
+    </div>
+</div>
+
+<div id="pagination" class="mt-4"></div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+
+    document.getElementById("orderSelect").value = params.get("ord") || "";
+    document.getElementById("filterSelect").value = params.get("filter") || "";
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const currentPage = parseInt(urlParams.get("page") || "1");
+    const q = urlParams.get("q")
+
+    function applySearch(page = 1) {
+        const ord = document.getElementById("orderSelect").value;
+        const filter = document.getElementById("filterSelect").value;
+
+        let url = `/search?q=${encodeURIComponent(q)}&page=${page}`;
+
+        if (ord) url += `&ord=${ord}`;
+        if (filter) url += `&filter=${filter}`;
+
+        window.location.href = url;
+    }
+
+    function goToPage(page) {
+        applySearch(page);
+    }
+
+    function renderPagination(totalPages, currentPage) {
+        let html = `<nav><ul class="pagination">`;
+
+        // Previous
+        html += `
+            <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="goToPage(${currentPage - 1})">&laquo;</a>
+            </li>
+        `;
+
+        for (let i = currentPage - 2; i <= totalPages + 1; i++) {
+            if (i < 1) { continue }
+            html += `
+                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+                </li>
+            `;
+        }
+
+        // Next
+        html += `
+            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="goToPage(${currentPage + 1})">&raquo;</a>
+            </li>
+        `;
+
+        html += `</ul></nav>`;
+
+        document.getElementById("pagination").innerHTML = html;
+    }
+
+    document.getElementById("search_line").addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+            applySearch();
+        }
+    });
+
+    renderPagination(currentPage + 1, currentPage);
+</script>

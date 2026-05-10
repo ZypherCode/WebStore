@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from config import Consts
 from flask_login import LoginManager, current_user
 
@@ -40,32 +40,18 @@ app.register_blueprint(user_bp)
 
 @app.route("/")
 def index():
+    per_page = 50
+    page = int(request.args.get('page') or 1)
     db_sess = db_session.create_session()
-    items = db_sess.query(Products).order_by((Products.clicked / Products.showed).desc()).all()
+    items = db_sess.query(Products).order_by((Products.clicked / Products.showed).desc()) \
+        .limit(per_page).offset((page - 1) * per_page).all()
+
     for i in items:
         i.showed += 1
     db_sess.commit()
 
     results_num = len(items)
-    return render_template('feed.html', title="Главная", num=results_num, items=items)
-
-@app.route("/debug/cart-test")
-def test_cart():
-    db_sess = db_session.create_session()
-
-    user = db_sess.query(User).first()
-    product = db_sess.query(Products).first()
-
-    cart = Cart(user=user, product=product, quantity=2)
-
-    db_sess.add(cart)
-    db_sess.commit()
-
-    return {
-        "user": user.name,
-        "product": product.title,
-        "quantity": cart.quantity
-    }
+    return render_template('feed.html', title="Главная", num=results_num, items=items, include="<h1>Топ-50<h1>")
 
 def main():
     db_session.global_init("db/store.db")

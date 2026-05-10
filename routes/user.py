@@ -24,15 +24,14 @@ def user_page(query_id):
         boughts = 0
         good = 0
         bad = 0
+        count = 0
         for i in items:
-            i.showed += 1
+            count += 1
             boughts += i.bought
             good += i.good_marks
             bad += i.bad_marks
-        db_sess.commit()
-        return render_template('feed.html', title=user.name, num=len(items), items=items, 
-                               include=render_template("seller_guest.html", 
-                                                       user=user, bought=format_number(boughts), mark=(good / (good + bad)) * 100))
+        return render_template("seller_guest.html", user=user, num=format_number(count), bought=format_number(boughts), mark=(good / (good + bad)) * 100)
+    
     elif user.id == current_user.id:
         return redirect("/account")
     else:

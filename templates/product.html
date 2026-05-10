@@ -34,9 +34,11 @@
                     <a href="/cart" class="btn btn-success" id="add-to-cart" data-disable="true"
                         data-item-id="{{item.id}}">Уже
                         в корзине</a>
-                    {% else %}
+                    {% elif item.stock > 0 %}
                     <button class="btn btn-success" id="add-to-cart" data-disable="false" data-item-id="{{item.id}}">В
                         корзину</button>
+                    {% else %}
+                    <button class="btn btn-secondary" disabled>Нет на складе</button>
                     {% endif %}
                     <p><br>Продавец: <a href="/user/{{seller.id}}">{{seller.name}}</a></p>
                 </div>

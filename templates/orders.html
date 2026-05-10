@@ -34,11 +34,11 @@
                 </thead>
                 <tbody>
 
-                    {% set total = 0 %}
+                    {% set ns = namespace(total=0) %}
 
                     {% for item in order.items %}
                     {% set item_sum = item.price * item.quantity %}
-                    {% set total = total + item_sum %}
+                    {% set ns.total = ns.total + item_sum %}
 
                     <tr>
                         <td style="width: 80px;">
@@ -71,7 +71,7 @@
             <div class="d-flex justify-content-between align-items-center mt-3">
 
                 <div>
-                    <strong>Итого: {{ total }} ₽</strong>
+                    <strong>Итого: {{ ns.total }} ₽</strong>
                 </div>
 
                 <div>

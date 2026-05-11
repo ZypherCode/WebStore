@@ -7,6 +7,8 @@ __pycache__/
 *.so
 
 db/*.db
+.idea
+venv
 
 # Distribution / packaging
 .Python

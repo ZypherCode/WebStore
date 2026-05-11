@@ -1,0 +1,17 @@
+## The following requirements were added by pip freeze:
+bleach
+blinker
+click
+Faker
+Flask
+Flask-Login
+Flask-WTF
+greenlet
+itsdangerous
+Jinja2
+MarkupSafe
+SQLAlchemy
+typing_extensions
+webencodings
+Werkzeug
+WTForms
